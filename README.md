@@ -1,0 +1,2 @@
+# Spotix
+Spotify streaming tool
