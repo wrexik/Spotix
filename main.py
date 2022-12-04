@@ -257,16 +257,6 @@ while inf == 1:
         #prints all info !
         print("Remaining seconds till token refresh: " f'{tokenage}')
 
-        try:
-            down = getimage
-            detect = down
-        except:
-            print("L")
-        
-        down = getimage()
-        out = getname()
-        updelay()
-
     else:
         #this is where the magic happens (token refresh!)
         start_time = gen_token()
