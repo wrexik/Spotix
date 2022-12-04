@@ -6,7 +6,7 @@ This is one of the outpusts you can get with Spotix!
 ![This is output](https://github.com/wrexik/Spotix/blob/main/output/output.jpeg)
 
 # Instalation:
-1. First of all you need to create spotify application [here]([https://pages.github.com/](https://developer.spotify.com/dashboard/applications))
+1. First of all you need to create spotify application [here](https://developer.spotify.com/dashboard/applications)
   Log in and create application make sure you set Uri redirect to `http://localhost:8888/callback`
 2. Now let's install requirements with `python -m pip install -r requirements.txt` and we are done here!
 3. Lastly we'll edit the tool to work with spotify. Open `main.py` and edit these variables to match your spotify application
@@ -30,7 +30,7 @@ and `font_artist_size` is the name of the artist
 To disable average color use `getcolor = True/False`.
 To change color use `background_color = YourRGBValue` (don't forget it needs to be in tuple)
 
-#ToDO:
+# ToDo:
 - [ ] fit text to image output
 - [ ] more customization and dominant color maybe
 - [ ] support for chinesse characters
