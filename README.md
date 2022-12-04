@@ -1,6 +1,9 @@
 # Spotix
 Spotify streaming tool - Spotix is a tool that enables you to have spotify current playing song on your stream!
-All you need is to create spotify applicaton and fill it into the tool
+
+This is one of the outpusts you can get with Spotix!
+
+![This is output](https://github.com/wrexik/Spotix/blob/main/output/output.jpeg)
 
 # Instalation:
 1. First of all you need to create spotify application [here]([https://pages.github.com/](https://developer.spotify.com/dashboard/applications))
@@ -12,13 +15,14 @@ myClientId='YourClientId'
 mySecret='YourSecret'
 ```
 # Customization:
-Tool has options to custumizate output text, color and font
+Tool has options to custumize output text, color and font
 
 ### Text:
 To change font, download font in `.ttf` format and put it in the folder named assets
 next set `font = 'YourFontName.ttf'` dont forget the `.ttf`
 
 To change size easily edit `font_name_size = 74` and `font_artist_size = 70`.
+
 That means `font_name_size` is name of the song
 and `font_artist_size` is the name of the artist
 
