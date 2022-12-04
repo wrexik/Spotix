@@ -13,8 +13,8 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 #user edit section
-myClientId='YourClientId'
-mySecret='YourSecret'
+myClientId='c0a96d6c83c142cc88d0429d3da466db'
+mySecret='12fc1005272d487ca8e70c9e24e8e225'
 
 #you dont have to edit myRedirect just make sure you have same one in your spotify application
 myRedirect='http://localhost:8888/callback'
@@ -28,8 +28,8 @@ background_color = (50, 50, 50) #input wanted rgb color for image background
 delay = 10
 #font (download font in .tff format and put it in the assets folder and dont forget to rename this variable)
 font = "agrane.ttf"
-font_name_size = 74
-font_artist_size = 60
+font_name_size = 97
+font_artist_size = 80
 
 #username (just to sort the tokens and stuff)
 username = "Wrexik"
@@ -37,7 +37,8 @@ username = "Wrexik"
 
 #end of user edit section 😁
 scope = "user-read-currently-playing"
-version = "v1"
+version = "v2"
+osn = os.name
 
 token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedirect)
 
@@ -60,6 +61,16 @@ def gen_token():
     print("Using generated token for 3600 seconds")
     return start_time
 
+def checkfile():
+    if not os.path.exists('assets'):
+        os.mkdir('assets')
+    else:
+        print("File assets already exist 😎")
+
+    if not os.path.exists('output'):
+        os.mkdir('output')
+    else:
+        print("File assets output exist 😎")
 
 
 def getimage():
@@ -120,8 +131,8 @@ def getimage():
         art = ImageFont.truetype("assets/"f'{font}', font_artist_size)
 
         #prints song name & artist
-        draw.text((650, 260),song_name,(255,255,255),font=name)
-        draw.text((650, 330),song_artist,(255,255,255),font=art)
+        draw.text((650, 240),song_name,(255,255,255),font=name)
+        draw.text((650, 320),song_artist,(255,255,255),font=art)
         background.save('output/output.jpeg')
  
 
@@ -150,7 +161,6 @@ def getname():
         return out
 
 #ascii art 👑
-osn = os.name
 
 def ascii():
     osn = os.name
@@ -224,18 +234,26 @@ def ascii():
     else:
         os.system('cls')
 
-    print(r"""
+    print("""
        ____          __  _     
       / __/__  ___  / /_(_)_ __
      _\ \/ _ \/ _ \/ __/ /\ \ /
-    /___/ .__/\___/\__/_//_\_\ 
+    /___/ .__/\___/\__/_//_\_\  {}
        /_/                     
-                                """)
+                                """.format(version))
+
+def updelay():
+    repeat = 0
+    while repeat < delay:
+        repeat = repeat + 1
+        print("[" + "|" + "]", end = ' ')
+        time.sleep(1)
 
 ascii()
 
 inf = 1
 down = False
+checkfile()
 start_time = gen_token()
 start_output = start_time + 3500
 
@@ -269,14 +287,14 @@ while inf == 1:
         print("Remaining seconds till token refresh: " f'{tokenage}')
         down = getimage()
         out = getname()
-        time.sleep(delay)
+        updelay()
 
     else:
         #this is where the magic happens (token refresh!)
         start_time = gen_token()
         start_output = start_time + 3500
         gen_token()
-        time.sleep(delay)
+        updelay()
 
     osn = os.name
 
