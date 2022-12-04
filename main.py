@@ -37,7 +37,7 @@ username = "Wrexik"
 
 #end of user edit section 😁
 scope = "user-read-currently-playing"
-version = "v2"
+version = "v2.1"
 osn = os.name
 
 token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedirect)
@@ -72,20 +72,16 @@ def checkfile():
     else:
         print("File assets output exist 😎")
 
+def clear():
+    if(osn == 'posix'):
+        os.system('clear')
+    else:
+        os.system('cls')
 
 def getimage():
         sp = spotipy.Spotify(auth=token)
         currentsong = sp.currently_playing()
-
-            #tests if any music is playing
-        try:
-            song_name = currentsong['item']['name']
-        except:
-            print('No music playing')
-            print(" ")
-            exit()
-        
-        
+        song_name = currentsong['item']['name']
         song_image = currentsong['item']['album']['images'][0]['url']
         song_artist = currentsong['item']['artists'][0]['name']
             
@@ -103,7 +99,7 @@ def getimage():
         if getcolor == False:
             average_color_tuple = background_color
         else:
-                    # Calculate the average color of the image
+            # Calculate the average color of the image
             src_img = cv2.imread('output/icon.jpeg')
             average_color_row = np.average(src_img, axis=0)
             average_color = np.average(average_color_row, axis=0)
@@ -120,20 +116,20 @@ def getimage():
 
             print("Average color (RGB): " + f'{average_color_tuple}')
 
-        #building the final image
-        img = Image.open('output/icon.jpeg', 'r')
+            #building the final image
+            img = Image.open('output/icon.jpeg', 'r')
 
-        background = Image.new('RGB', (1920, 640), average_color_tuple)
-        offset = (0, 0)
-        background.paste(img, offset)
-        draw = ImageDraw.Draw(background)
-        name = ImageFont.truetype("assets/"f'{font}', font_name_size)
-        art = ImageFont.truetype("assets/"f'{font}', font_artist_size)
+            background = Image.new('RGB', (1920, 640), average_color_tuple)
+            offset = (0, 0)
+            background.paste(img, offset)
+            draw = ImageDraw.Draw(background)
+            name = ImageFont.truetype("assets/"f'{font}', font_name_size)
+            art = ImageFont.truetype("assets/"f'{font}', font_artist_size)
 
-        #prints song name & artist
-        draw.text((650, 240),song_name,(255,255,255),font=name)
-        draw.text((650, 320),song_artist,(255,255,255),font=art)
-        background.save('output/output.jpeg')
+            #prints song name & artist
+            draw.text((650, 240),song_name,(255,255,255),font=name)
+            draw.text((650, 320),song_artist,(255,255,255),font=art)
+            background.save('output/output.jpeg')
  
 
 def getname():
@@ -172,11 +168,7 @@ def ascii():
 
                                 """)
     time.sleep(.5)
-    if(osn == 'posix'):
-        os.system('clear')
-
-    else:
-        os.system('cls')
+    clear()
 
     print(r"""
        ____ 
@@ -186,11 +178,7 @@ def ascii():
        /_/                     
                                 """)
     time.sleep(.5)
-    if(osn == 'posix'):
-       os.system('clear')
-
-    else:
-       os.system('cls')
+    clear()
 
     print(r"""
        ____   
@@ -200,11 +188,7 @@ def ascii():
        /_/                     
                                 """)
     time.sleep(.5)
-    if(osn == 'posix'):
-       os.system('clear')
-
-    else:
-       os.system('cls')
+    clear()
 
     print(r"""
        ____          __ 
@@ -214,11 +198,7 @@ def ascii():
        /_/                     
                                 """)
     time.sleep(.5)
-    if(osn == 'posix'):
-        os.system('clear')
-
-    else:
-        os.system('cls')
+    clear()
 
     print(r"""
        ____          __  _     
@@ -228,11 +208,7 @@ def ascii():
        /_/                     
                                 """)
     time.sleep(.5)
-    if(osn == 'posix'):
-        os.system('clear')
-
-    else:
-        os.system('cls')
+    clear()
 
     print("""
        ____          __  _     
@@ -244,10 +220,11 @@ def ascii():
 
 def updelay():
     repeat = 0
-    while repeat < delay:
+    print("Delay in seconds: "f'{delay}')
+    while delay > repeat:
         repeat = repeat + 1
-        print("[" + "|" + "]", end = ' ')
         time.sleep(1)
+        print("["f'{repeat}'"]", end='',flush=True)
 
 ascii()
 
@@ -259,13 +236,7 @@ start_output = start_time + 3500
 
 time.sleep(2)
 
-if(osn == 'posix'):
-    os.system('clear')
-
-else:
-    os.system('cls')
-
-
+clear()
 #ez infinity loop
 while inf == 1:
 
@@ -285,6 +256,13 @@ while inf == 1:
         tokenage = np.round(remaining)
         #prints all info !
         print("Remaining seconds till token refresh: " f'{tokenage}')
+
+        try:
+            down = getimage
+            detect = down
+        except:
+            print("L")
+        
         down = getimage()
         out = getname()
         updelay()
@@ -296,13 +274,6 @@ while inf == 1:
         gen_token()
         updelay()
 
-    osn = os.name
-
-    if(osn == 'posix'):
-        os.system('clear')
-
-    else:
-        os.system('cls')
-        
+    clear()
 
     
