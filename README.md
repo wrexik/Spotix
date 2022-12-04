@@ -10,6 +10,7 @@ This is one of the outpusts you can get with Spotix!
   Log in and create application make sure you set Uri redirect to `http://localhost:8888/callback`
 2. Now let's install requirements with `python -m pip install -r requirements.txt` and we are done here!
 3. Lastly we'll edit the tool to work with spotify. Open `main.py` and edit these variables to match your spotify application
+4. **Dont forget** put the font (agrane.ttf for example) into assets folder and change the name to the fonts name in the config!
 ```
 myClientId='YourClientId'
 mySecret='YourSecret'
