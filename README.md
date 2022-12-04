@@ -34,6 +34,7 @@ To disable average color use `getcolor = True/False`.
 To change color use `background_color = YourRGBValue` (don't forget it needs to be in tuple)
 
 # ToDo:
+- [ ] **Detect when nothing is playing**
 - [ ] fit text to image output
 - [ ] more customization and dominant color maybe
 - [ ] support for chinesse characters
