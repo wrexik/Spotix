@@ -29,3 +29,8 @@ and `font_artist_size` is the name of the artist
 ### Color:
 To disable average color use `getcolor = True/False`.
 To change color use `background_color = YourRGBValue` (don't forget it needs to be in tuple)
+
+#ToDO:
+- [ ] fit text to image output
+- [ ] more customization and dominant color maybe
+- [ ] support for chinesse characters
