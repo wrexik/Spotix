@@ -1,7 +1,7 @@
 # Spotix
 Spotify streaming tool - Spotix is a tool that enables you to have spotify current playing song on your stream!
 
-This is one of the outpusts you can get with Spotix!
+This is one of the outputs you can get with Spotix!
 
 ![This is output](https://github.com/wrexik/Spotix/blob/main/output/output.jpeg)
 
