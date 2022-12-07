@@ -13,6 +13,17 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+#my idea section:
+
+"""
+✅ Non-Ascii support
+❌ Enable or disable image output generation
+❌ Add option to enable dominant color (officialy used on older android's by spotify)
+
+"""
+
+
+
 #user edit section
 myClientId='YourClientId'
 mySecret='YourSecret'
@@ -51,17 +62,19 @@ token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedi
 CREDENTIALS = spotipy.oauth2.SpotifyClientCredentials(client_id=myClientId,
                                                      client_secret=mySecret)
 def gen_token():
+    global username
+
+    os.remove(".cache-"f'{username}')
+    print("deleted .cache-"f'{username}')
     """
         returns refreshed Spotify API authentication with defined credentials
     """
     start_time = time.time()
-    username = "Wrexik"
     scope = "user-read-currently-playing"
 
     token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedirect)
 
     currenttime = time.ctime()
-
     sp = spotipy.Spotify(auth=token)
     print("Refreshing token |", f'{currenttime}')
     print("Using generated token for 1000 seconds")
@@ -99,6 +112,7 @@ def checkfiles():
     print("----Fonts----")
     
     checkfonts = findfonts()
+    time.sleep(2)
 
     if checkfonts == False:
         #font part
@@ -185,7 +199,12 @@ def getimage():
         sp = spotipy.Spotify(auth=token)
         currentsong = sp.currently_playing()
 
-        song_name = currentsong['item']['name']
+        try:
+            song_name = currentsong['item']['name']
+        except spotipy.SpotifyException:
+            print("Refreshing token")
+            gen_token()
+
         song_image = currentsong['item']['album']['images'][0]['url']
         song_artist = currentsong['item']['artists'][0]['name']
     
@@ -253,7 +272,12 @@ def getname():
         sp = spotipy.Spotify(auth=token)
         currentsong = sp.currently_playing()
 
-        song_name = currentsong['item']['name']
+        try:
+            song_name = currentsong['item']['name']
+        except spotipy.SpotifyException:
+            print("Refreshing token")
+            gen_token()
+
         song_artist = currentsong['item']['artists'][0]['name']
         song_image = currentsong['item']['album']['images'][0]['url']
 
@@ -364,29 +388,26 @@ def logo():
 def main():
 
     #start
-    checkfiles() #checks if folders and fonts are OK
     ascii()
+    checkfiles() #checks if folders and fonts are OK
     inf = 1
-
-
-
 
     start_time = gen_token()
     start_output = start_time + 1000
 
-    time.sleep(2)
+    time.sleep(5)
 
     clear()
     #ez infinity loop
     while inf == 1:
 
         print("""
-            ____          __  _     
-           / __/__  ___  / /_(_)_ __
-          _\ \/ _ \/ _ \/ __/ /\ \ /
-         /___/ .__/\___/\__/_//_\_\  {}
-            /_/                     
-                                    """.format(version))
+        ____          __  _     
+       / __/__  ___  / /_(_)_ __
+      _\ \/ _ \/ _ \/ __/ /\ \ /
+     /___/ .__/\___/\__/_//_\_\  {}
+        /_/                     
+                                """.format(version))
 
         new_time = time.time()
 
