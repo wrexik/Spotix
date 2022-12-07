@@ -64,7 +64,7 @@ def gen_token():
 
     sp = spotipy.Spotify(auth=token)
     print("Refreshing token |", f'{currenttime}')
-    print("Using generated token for 3600 seconds")
+    print("Using generated token for 1000 seconds")
 
     return start_time
         
@@ -372,7 +372,7 @@ def main():
 
 
     start_time = gen_token()
-    start_output = start_time + 3500
+    start_output = start_time + 1000
 
     time.sleep(2)
 
@@ -391,7 +391,7 @@ def main():
         new_time = time.time()
 
         #yeah you need to keep the token alive as well 🏥
-        if new_time < start_time + 3500:
+        if new_time < start_time + 1000:
             remaining = start_output - new_time
             tokenage = np.round(remaining)
             #prints all info !
@@ -404,7 +404,7 @@ def main():
         else:
             #this is where the magic happens (token refresh!)
             start_time = gen_token()
-            start_output = start_time + 3500
+            start_output = start_time + 1000
             gen_token()
             updelay()
 
