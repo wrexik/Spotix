@@ -34,7 +34,7 @@ and `font_artist_size` is the name of the artist
 - To change color use `background_color = YourRGBValue` (don't forget it needs to be in tuple)
 
 # To Do 🎛:
-- [ ] **Detect when nothing is playing**
+- [ ] **Detect when nothing is playing** (Need little help here)
 - [x] Support for chinesse characters
 - [x] Still background color
 - [ ] Fit text to image output
