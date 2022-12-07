@@ -1,10 +1,11 @@
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import os
 import time
-from spotipy.oauth2 import SpotifyOAuth
 import requests
+import wget
+import shutil
+import re #for non ASCII detector
 
 import cv2
 import numpy as np
@@ -13,8 +14,8 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 #user edit section
-myClientId='c0a96d6c83c142cc88d0429d3da466db'
-mySecret='12fc1005272d487ca8e70c9e24e8e225'
+myClientId='YourClientId'
+mySecret='YourSecret'
 
 #you dont have to edit myRedirect just make sure you have same one in your spotify application
 myRedirect='http://localhost:8888/callback'
@@ -23,11 +24,11 @@ myRedirect='http://localhost:8888/callback'
 getcolor = True                 #If False tool will use color set down below. If True tool will calculate avrerage color from the image
 background_color = (50, 50, 50) #input wanted rgb color for image background 
 
-#request delay (updates in seconds)
+#request delay (updates in second)
 #its also limited with spotify max requests and image generation
 delay = 10
 #font (download font in .tff format and put it in the assets folder and dont forget to rename this variable)
-font = "agrane.ttf"
+font = "OpenSans-Regular.ttf"
 font_name_size = 97
 font_artist_size = 80
 
@@ -36,8 +37,13 @@ username = "Wrexik"
 
 
 #end of user edit section 😁
+OpenSans = 'assets/OpenSans-Regular.ttf'
+NotoSans = 'assets/NotoSansSC-Regular.otf'
+non_ascii_font = NotoSans
+
 scope = "user-read-currently-playing"
-version = "v2.1"
+version = "v3"
+
 osn = os.name
 
 token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedirect)
@@ -59,9 +65,26 @@ def gen_token():
     sp = spotipy.Spotify(auth=token)
     print("Refreshing token |", f'{currenttime}')
     print("Using generated token for 3600 seconds")
-    return start_time
 
-def checkfile():
+    return start_time
+        
+def findfonts():
+    if not os.path.exists(OpenSans):
+        if not os.path.exists(NotoSans):
+            print("fonts not found")
+            return False
+            
+    
+    else:
+        return True
+
+def checkfiles():
+
+    logo() #just logo
+
+
+    print("----Folders----")
+    #folders part
     if not os.path.exists('assets'):
         os.mkdir('assets')
     else:
@@ -71,6 +94,86 @@ def checkfile():
         os.mkdir('output')
     else:
         print("File assets output exist 😎")
+    
+    print(" ")
+    print("----Fonts----")
+    
+    checkfonts = findfonts()
+
+    if checkfonts == False:
+        #font part
+        OpenSans_file_name = 'Open_sans.zip'
+        non_ascii_file_name = 'Noto_Sans_SC.zip'
+        OpenSans_url = 'https://fonts.google.com/download?family=Open%20Sans'
+        non_ascii_font_url = 'https://fonts.google.com/download?family=Noto%20Sans%20SC'
+        OpenSans_extract_dir = 'assets/' + OpenSans_file_name
+        non_ascii_extract_dir = 'assets/' + non_ascii_file_name
+
+
+        if not os.path.exists(OpenSans):
+            #download OpenSans
+            print("Missing " f'{OpenSans}' " 💀")
+            print("Downloading needed fonts (1) 📡")
+            wget.download(OpenSans_url)
+            print(" ")
+            shutil.move(OpenSans_file_name , OpenSans_extract_dir)
+            print("Unpacking font (1) ⚙")
+            shutil.unpack_archive(OpenSans_extract_dir, "assets/")
+
+            #now the very fun part :(
+            print("Moving downloaded font (1) 🔁")
+            shutil.move('assets/static/OpenSans/OpenSans-Regular.ttf', 'assets/')
+                #removing crap
+            print("Removing crap (1) 🚮")
+            shutil.rmtree('assets/static')
+            os.remove(OpenSans_extract_dir)
+            os.remove('assets/README.txt')
+                #yes im keeping the licence file
+            os.rename('assets/OFL.txt', 'assets/OFL_OpenSans.txt')
+            print('Done ✅')
+
+        if not os.path.exists("assets/NotoSansSC-Regular.otf"):
+            print('')
+            print("Missing " f'{NotoSans}' " 💀")
+            print("Downloading needed fonts (2) 📡")
+            wget.download(non_ascii_font_url)
+            print(" ")
+            #font downloaded
+            print("Moving downloaded font (1) 🔁")
+            shutil.move(non_ascii_file_name , "assets/")
+            print("Unpacking font (2) ⚙")
+            shutil.unpack_archive(non_ascii_extract_dir, "assets/")
+                #now the very fun part :(
+                #removing crap
+            print("Removing crap (2) 🚮")
+            os.remove(non_ascii_extract_dir)
+            os.remove('assets/NotoSansSC-Black.otf')
+            os.remove('assets/NotoSansSC-Bold.otf')
+            os.remove('assets/NotoSansSC-Light.otf')
+            os.remove('assets/NotoSansSC-Medium.otf')
+            os.remove('assets/NotoSansSC-Thin.otf')
+                #yes im keeping the licence file
+            os.rename('assets/OFL.txt', 'assets/OFL_NotoSans.txt')
+            print('Done ✅')
+
+            time.sleep(2)
+        time.sleep(2)
+
+    else:
+        print("Fonts already downloaded 😎")
+        time.sleep(2)
+
+def cjk_detect(texts):
+    # korean
+    if re.search("[\uac00-\ud7a3]", texts):
+        return True
+    # japanese
+    if re.search("[\u3040-\u30ff]", texts):
+        return True
+    # chinese
+    if re.search("[\u4e00-\u9FFF]", texts):
+        return True
+    return False
 
 def clear():
     if(osn == 'posix'):
@@ -81,10 +184,10 @@ def clear():
 def getimage():
         sp = spotipy.Spotify(auth=token)
         currentsong = sp.currently_playing()
+
         song_name = currentsong['item']['name']
         song_image = currentsong['item']['album']['images'][0]['url']
         song_artist = currentsong['item']['artists'][0]['name']
-            
     
         url = song_image
 
@@ -123,8 +226,22 @@ def getimage():
             offset = (0, 0)
             background.paste(img, offset)
             draw = ImageDraw.Draw(background)
-            name = ImageFont.truetype("assets/"f'{font}', font_name_size)
-            art = ImageFont.truetype("assets/"f'{font}', font_artist_size)
+
+            if cjk_detect(song_name) == True:
+                non_ascii_font_size = font_name_size - 15
+
+                name = ImageFont.truetype(non_ascii_font, non_ascii_font_size)
+                print("Found non ASCII chars in song's name")
+            else:
+                name = ImageFont.truetype("assets/"f'{font}', font_artist_size)
+
+            if cjk_detect(song_image) == True:
+                non_ascii_font_size = font_artist_size - 15
+
+                art = ImageFont.truetype(non_ascii_font, non_ascii_font_size)
+                print("Found non ASCII chars in song's artist")
+            else:
+                art = ImageFont.truetype("assets/"f'{font}', font_artist_size)
 
             #prints song name & artist
             draw.text((650, 240),song_name,(255,255,255),font=name)
@@ -145,12 +262,19 @@ def getname():
             "ARTIST": song_artist
         }
 
-        print("Now playing {} by {}".format(song_name, song_artist), " 🎶")
+        print("Now playing {} by {}".format(song_name, song_artist), "🎶")
 
-        filewrite = song_name + " by " + song_artist
-        f = open("output/song.txt", "w")
-        f.write(filewrite)
-        f.close
+        txtoutput = song_name + " by " + song_artist
+
+        if cjk_detect(txtoutput) == True:
+            with open("output/song.txt", "w",encoding='utf-8') as f:
+                f.writelines(txtoutput)
+                f.close
+                
+        else:
+            f = open("output/song.txt", "w")
+            f.write(txtoutput)
+            f.close
     
         url = song_image
         last_url = "0"
@@ -226,44 +350,66 @@ def updelay():
         time.sleep(1)
         print("["f'{repeat}'"]", end='',flush=True)
 
-ascii()
+def logo():
+            print("""
+            ____          __  _     
+           / __/__  ___  / /_(_)_ __
+          _\ \/ _ \/ _ \/ __/ /\ \ /
+         /___/ .__/\___/\__/_//_\_\  {}
+            /_/                     
+                                    """.format(version))
 
-inf = 1
-down = False
-checkfile()
-start_time = gen_token()
-start_output = start_time + 3500
 
-time.sleep(2)
 
-clear()
-#ez infinity loop
-while inf == 1:
+def main():
 
-    print("""
-         ____          __  _     
-        / __/__  ___  / /_(_)_ __
-       _\ \/ _ \/ _ \/ __/ /\ \ /
-      /___/ .__/\___/\__/_//_\_\  {}
-         /_/                     
-                                """.format(version))
+    #start
+    checkfiles() #checks if folders and fonts are OK
+    ascii()
+    inf = 1
 
-    new_time = time.time()
 
-    #yeah you need to keep the token alive as well 🏥
-    if new_time < start_time + 3500:
-        remaining = start_output - new_time
-        tokenage = np.round(remaining)
-        #prints all info !
-        print("Remaining seconds till token refresh: " f'{tokenage}')
 
-    else:
-        #this is where the magic happens (token refresh!)
-        start_time = gen_token()
-        start_output = start_time + 3500
-        gen_token()
-        updelay()
+
+    start_time = gen_token()
+    start_output = start_time + 3500
+
+    time.sleep(2)
 
     clear()
+    #ez infinity loop
+    while inf == 1:
+
+        print("""
+            ____          __  _     
+           / __/__  ___  / /_(_)_ __
+          _\ \/ _ \/ _ \/ __/ /\ \ /
+         /___/ .__/\___/\__/_//_\_\  {}
+            /_/                     
+                                    """.format(version))
+
+        new_time = time.time()
+
+        #yeah you need to keep the token alive as well 🏥
+        if new_time < start_time + 3500:
+            remaining = start_output - new_time
+            tokenage = np.round(remaining)
+            #prints all info !
+            print("Remaining seconds till token refresh: " f'{tokenage}')
+            
+            down = getimage()
+            out = getname()
+            updelay()
+
+        else:
+            #this is where the magic happens (token refresh!)
+            start_time = gen_token()
+            start_output = start_time + 3500
+            gen_token()
+            updelay()
+
+        clear()
+
+main()
 
     
