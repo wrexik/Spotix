@@ -25,8 +25,8 @@ from PIL import ImageFont
 
 
 #user edit section
-myClientId='YourClientId'
-mySecret='YourSecret'
+myClientId='a1e925d189c74d7faf206ad826c1f9c9'
+mySecret='55bbd8a7be94492e96b626f2155619a8'
 
 #you dont have to edit myRedirect just make sure you have same one in your spotify application
 myRedirect='http://localhost:8888/callback'
@@ -92,8 +92,6 @@ def findfonts():
         return True
 
 def checkfiles():
-
-    logo() #just logo
 
 
     print("----Folders----")
