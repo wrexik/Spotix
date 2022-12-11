@@ -97,11 +97,13 @@ def checkfiles():
     print("----Folders----")
     #folders part
     if not os.path.exists('assets'):
+        print("File assets not found (creating one)")
         os.mkdir('assets')
     else:
         print("File assets already exist 😎")
 
     if not os.path.exists('output'):
+        print("File assets not found (creating one)")
         os.mkdir('output')
     else:
         print("File assets output exist 😎")
