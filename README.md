@@ -5,7 +5,7 @@ This is one of the outputs you can get with Spotix!
 
 ![This is output](https://github.com/wrexik/Spotix/blob/main/output/output.jpeg)
 
-# Instalation Python ⚙:
+# Installation Python ⚙:
 1. First of all you need to create spotify application [here](https://developer.spotify.com/dashboard/applications)
   Log in and create application make sure you set Uri redirect to `http://localhost:8888/callback`
 2. And now let's install requirements with `python -m pip install -r requirements.txt` and we are done here!
@@ -13,7 +13,7 @@ This is one of the outputs you can get with Spotix!
 4. Run the `main.py` and paste in your `client-id` and `client-secret` finally set your username!
 5. And enjoy. Outputs are located in `output` folder
 
-# Instalation for exe ⚙:
+# Installation for exe ⚙:
 1. First of all you need to create spotify application [here](https://developer.spotify.com/dashboard/applications) Log in and create application make sure you set Uri redirect to `http://localhost:8888/callback`
 3. Download exe from [here](https://github.com/wrexik/Spotix/releases)
 4. Run the exe and paste in your `client-id` and `client-secret` finally set your username!
