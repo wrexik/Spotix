@@ -35,13 +35,14 @@ OpenSans = 'assets/OpenSans-Regular.ttf'
 NotoSans = 'assets/NotoSansSC-Regular.otf'
 non_ascii_font = NotoSans
 
+
 scope = "user-read-currently-playing"
 version = "v4 Python"
 
 inf = 1
 osn = os.name
 
-def config():
+def read_config():
     if not os.path.exists("spotix_config.ini"):
         print(" ")
         myClientId = input("Please input your client id: ")
@@ -132,18 +133,18 @@ def gen_token():
 
     return start_time
         
-def findfonts():
-    if not os.path.exists(OpenSans):
-        if not os.path.exists(NotoSans):
-            print("fonts not found")
-            return False
-            
-    
+def findfonts(OpenSans_path, NotoSans_path):
+    fontfiles = [OpenSans_path, NotoSans_path]
+    missingfonts = []
+    for fontfile in fontfiles:
+        if not os.path.exists(fontfile):
+            missingfonts.append(fontfile)
+    if missingfonts:
+        return False
     else:
         return True
 
-def checkfiles():
-
+def checkfiles(OpenSans_path, NotoSans_path):
     print("----Folders----")
     #folders part
     if not os.path.exists('assets'):
@@ -161,7 +162,7 @@ def checkfiles():
     print(" ")
     print("----Fonts----")
     
-    checkfonts = findfonts()
+    checkfonts = findfonts(OpenSans_path, NotoSans_path)
 
     if checkfonts == False:
         #font part
@@ -173,9 +174,9 @@ def checkfiles():
         non_ascii_extract_dir = 'assets/' + non_ascii_file_name
 
 
-        if not os.path.exists(OpenSans):
+        if not os.path.exists(OpenSans_path):
             #download OpenSans
-            print("Missing " f'{OpenSans}' " 💀")
+            print("Missing " f'{OpenSans_path}' " 💀")
             print("Downloading needed fonts (1) 📡")
             wget.download(OpenSans_url)
             print(" ")
@@ -195,9 +196,9 @@ def checkfiles():
             os.rename('assets/OFL.txt', 'assets/OFL_OpenSans.txt')
             print('Done ✅')
 
-        if not os.path.exists("assets/NotoSansSC-Regular.otf"):
+        if not os.path.exists(NotoSans_path):
             print('')
-            print("Missing " f'{NotoSans}' " 💀")
+            print("Missing " f'{NotoSans_path}' " 💀")
             print("Downloading needed fonts (2) 📡")
             wget.download(non_ascii_font_url)
             print(" ")
@@ -209,14 +210,32 @@ def checkfiles():
                 #now the very fun part :(
                 #removing crap
             print("Removing crap (2) 🚮")
-            os.remove(non_ascii_extract_dir)
-            os.remove('assets/NotoSansSC-Black.otf')
-            os.remove('assets/NotoSansSC-Bold.otf')
-            os.remove('assets/NotoSansSC-Light.otf')
-            os.remove('assets/NotoSansSC-Medium.otf')
-            os.remove('assets/NotoSansSC-Thin.otf')
-                #yes im keeping the licence file
-            os.rename('assets/OFL.txt', 'assets/OFL_NotoSans.txt')
+
+        if not os.path.exists(OpenSans):
+            # Download and unpack OpenSans font
+            # ...
+            # Cleanup after downloading and unpacking
+            if os.path.exists(OpenSans_extract_dir):
+                shutil.rmtree(OpenSans_extract_dir)
+            if os.path.exists('assets/README.txt'):
+                os.remove('assets/README.txt')
+            if os.path.exists('assets/OFL.txt'):
+                os.rename('assets/OFL.txt', 'assets/OFL_OpenSans.txt')
+
+        if not os.path.exists(NotoSans):
+            # Download and unpack NotoSans font
+            # ...
+            # Cleanup after downloading and unpacking
+            if os.path.exists(non_ascii_extract_dir):
+                os.remove(non_ascii_extract_dir)  # Remove the ZIP archive
+            if os.path.exists(non_ascii_extract_dir):
+                if os.path.isdir(non_ascii_extract_dir):
+                    shutil.rmtree(non_ascii_extract_dir)
+                elif os.path.isfile(non_ascii_extract_dir):
+                    os.remove(non_ascii_extract_dir)
+            if os.path.exists('assets/OFL.txt'):
+                os.rename('assets/OFL.txt', 'assets/OFL_NotoSans.txt')
+
             print('Done ✅')
 
             time.sleep(2)
@@ -701,16 +720,15 @@ def logo():
                                     """.format(version))
 
 
-
 def main():
-
     #start
     art()
 
-    checkfiles() #checks if folders and fonts are OK
-    if not os.path.exists("spotix_config.ini"):
-        config()
+    OpenSans_path = 'assets/OpenSans-Regular.ttf'
+    NotoSans_path = 'assets/NotoSansSC-Regular.otf'
 
+    checkfiles(OpenSans_path, NotoSans_path) #checks if folders and fonts are OK
+    read_config()  # Read the configuration
     start_time = gen_token()
     start_output = start_time + 1000
 
@@ -801,5 +819,3 @@ def main():
         clear()
 
 main()
-
-    
