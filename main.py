@@ -28,22 +28,17 @@ from PIL import ImageFont
 
 """
 
-
-
 #end of user edit section 😁
 OpenSans = 'fonts/OpenSans.ttf'
 NotoSans = 'fonts/NotoSans.ttf'
 non_ascii_font = NotoSans
 
-
-
 scope = "user-read-currently-playing"
-version = "v4.1 Python"
+version = "v4.5 Python"
 
 inf = 1
 osn = os.name
 
-def read_config():
 def read_config():
     if not os.path.exists("spotix_config.ini"):
         print(" ")
@@ -102,8 +97,6 @@ def read_config():
         username = config.get('LOGIN', 'username')
         background_color = eval(config.get('custom', 'background_color'))
 
-
-
 def gen_token():
     config = configparser.ConfigParser()
 
@@ -117,9 +110,6 @@ def gen_token():
 
     username = config.get('LOGIN', 'username')
 
-    if os.path.exists(".cache-"f'{username}'):
-        os.remove(".cache-"f'{username}')
-        print("deleted .cache-"f'{username}')
     """
         returns refreshed Spotify API authentication with defined credentials
     """
@@ -134,6 +124,56 @@ def gen_token():
     print("Using generated token for 1000 seconds")
 
     return start_time
+
+def renew_token():
+    config = configparser.ConfigParser()
+
+    # Read in the config file
+    config.read('spotix_config.ini')
+
+    # Access values in the config file
+    myClientId = config.get('LOGIN', 'client-id')
+    mySecret = config.get('LOGIN', 'client-secret')
+    myRedirect = config.get('REDIRECT', 'redc')
+
+    username = config.get('LOGIN', 'username')
+
+    """
+        returns renewed Spotify API authentication with defined credentials
+    """
+    start_time = time.time()
+    scope = "user-read-currently-playing"
+
+    token = util.prompt_for_user_token(username, scope, myClientId, mySecret, myRedirect)
+
+    currenttime = time.ctime()
+    sp = spotipy.Spotify(auth=token)
+    print("Renewing token |", f'{currenttime}')
+    print("Using renewed token for 1000 seconds")
+
+    return start_time
+
+def check_token():
+    config = configparser.ConfigParser()
+
+    # Read in the config file
+    config.read('spotix_config.ini')
+
+    # Access values in the config file
+    username = config.get('LOGIN', 'username')
+
+    token_valid = False
+
+    if os.path.exists(".cache-"f'{username}'):
+        try:
+            token = util.prompt_for_user_token(username, scope)
+            sp = spotipy.Spotify(auth=token)
+            sp.current_user()
+            token_valid = True
+        except spotipy.SpotifyException:
+            token_valid = False
+
+    return token_valid
         
 def findfonts(OpenSans, NotoSans):
     fontfiles = [OpenSans, NotoSans]
@@ -176,11 +216,17 @@ def checkfiles(OpenSans, NotoSans):
             #download OpenSans
             print("Missing " f'{OpenSans_path}' " 💀")
             print("Please download OpenSans.ttf")
+            print("and place it in the fonts folder")
+
+            time.sleep(20)
 
         if not os.path.exists(NotoSans_path):
             print('')
             print("Missing " f'{NotoSans_path}' " 💀")
             print("Please download NotoSans.ttf")
+            print("and place it in the fonts folder")
+
+            time.sleep(20)
 
 def cjk_detect(text):
     cjk_pattern = re.compile(r'[\u4e00-\u9fff]|[\u3040-\u30ff]|[\u3130-\u318f]|[\uac00-\ud7af]')
@@ -663,18 +709,24 @@ def logo():
                                     """.format(version))
 
 def main():
-    #start
+    # Start
     art()
 
-    checkfiles(OpenSans, NotoSans)  # checks if folders and fonts are OK
+    checkfiles(OpenSans, NotoSans)  # Checks if folders and fonts are OK
     read_config()  # Read the configuration
-    start_time = gen_token()
+
+    # Check if token is valid, if not, generate a new one
+    if not check_token():
+        start_time = gen_token()
+    else:
+        start_time = time.time()
+
     start_output = start_time + 1000
 
     time.sleep(5)
 
     #
-    # Looking at this back, i was really crazy to write this in one file 😂
+    # Looking at this back, I was really crazy to write this in one file 😂
     #
 
     clear()
@@ -682,84 +734,60 @@ def main():
     while inf == 1:
         new_time = time.time()
 
-        # yeah you need to keep the token alive as well 🏥
-        if new_time < start_time + 1000:
-            logo()  # hehe
-
-            remaining = start_output - new_time
-            tokenage = np.round(remaining)
-            # prints all info !
-            print("Remaining seconds till token refresh: " f'{tokenage}')
-
-            config = configparser.ConfigParser()
-
-            # Read in the config file
-            config.read('spotix_config.ini')
-
-            get_average_color = config.getboolean('custom', 'get_average_color')
-
-            get_dominant_color = config.getboolean('custom', 'get_dominant_color')
-
-            set_background_color = config.getboolean('custom', 'set_background_color')
-
-            if get_dominant_color:  # gets dominant color if set in config
-                if get_average_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                if set_background_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                dominantimg()
-
-            if get_average_color:  # gets average color if set in config
-                if get_dominant_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                if set_background_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                averageimg()
-
-            if set_background_color:  # gets set background color as set in config
-                if get_dominant_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                if get_average_color:
-                    clear()
-                    print("Only one option please :D")
-                    print("get_average OR get_dominant OR set_background")
-                    time.sleep(10)
-                    exit("Two or more options set in config")
-                setcolor()
-
-            out, new_image = getname()
-            if new_image:
-                print(" ")
-                updelay()
-            else:
-                print(" ")
-                updelay()
-
-        else:
-            # this is where the magic happens (token refresh!)
-            start_time = gen_token()
+        # Renew token if needed
+        if new_time >= start_time + 1000:
+            start_time = renew_token()
             start_output = start_time + 1000
-            gen_token()
+
+        logo()  # hehe
+
+        remaining = start_output - new_time
+        tokenage = np.round(remaining)
+        # Prints all info!
+        print("Remaining seconds till token refresh: " f'{tokenage}')
+
+        config = configparser.ConfigParser()
+
+        # Read in the config file
+        config.read('spotix_config.ini')
+
+        get_average_color = config.getboolean('custom', 'get_average_color')
+        get_dominant_color = config.getboolean('custom', 'get_dominant_color')
+        set_background_color = config.getboolean('custom', 'set_background_color')
+
+        if get_dominant_color:  # Gets dominant color if set in config
+            if get_average_color or set_background_color:
+                clear()
+                print("Only one option please :D")
+                print("get_average OR get_dominant OR set_background")
+                time.sleep(10)
+                exit("Two or more options set in config")
+            dominantimg()
+
+        if get_average_color:  # Gets average color if set in config
+            if get_dominant_color or set_background_color:
+                clear()
+                print("Only one option please :D")
+                print("get_average OR get_dominant OR set_background")
+                time.sleep(10)
+                exit("Two or more options set in config")
+            averageimg()
+
+        if set_background_color:  # Gets set background color as set in config
+            if get_dominant_color or get_average_color:
+                clear()
+                print("Only one option please :D")
+                print("get_average OR get_dominant OR set_background")
+                time.sleep(10)
+                exit("Two or more options set in config")
+            setcolor()
+
+        out, new_image = getname()
+        if new_image:
+            print(" ")
+            updelay()
+        else:
+            print(" ")
             updelay()
 
         clear()
