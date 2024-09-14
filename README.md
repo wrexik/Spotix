@@ -27,7 +27,7 @@ Tool has options to custumize output text, color and font.
 
 ### Text 📃:
 - Font's are downloaded automaticaly on first run! but it's needed to have them because the tool checks for them everytime.
-- To change font, download font in `.ttf` format and put it in the folder named `assets` next set `font = 'YourFontName.ttf'` don't forget the `.ttf` and done.
+- To change font, download font in `.ttf` format and put it in the folder named `fonts` next set `font = 'YourFontName.ttf'` don't forget the `.ttf` and done.
 
 - To change size easily edit `font_name_size = 97` and `font_artist_size = 80`.
 
@@ -44,4 +44,4 @@ and `font_artist_size` is the name of the artist
 - [x] Support for chinesse characters
 - [x] Still background color
 - [x] Dominant color maybe
-- [x] Exe support 
+- [x] Token refresh
