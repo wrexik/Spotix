@@ -36,12 +36,14 @@ NotoSans = 'fonts/NotoSans.ttf'
 non_ascii_font = NotoSans
 
 
+
 scope = "user-read-currently-playing"
 version = "v4.1 Python"
 
 inf = 1
 osn = os.name
 
+def read_config():
 def read_config():
     if not os.path.exists("spotix_config.ini"):
         print(" ")
@@ -763,5 +765,3 @@ def main():
         clear()
 
 main()
-
-    
